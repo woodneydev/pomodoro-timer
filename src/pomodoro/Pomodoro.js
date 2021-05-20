@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import classNames from "../utils/class-names";
 import useInterval from "../utils/useInterval";
-import Clock from "./Clock"
-import {minutesToDuration, secondsToDuration} from "../utils/duration/index"
+import Clock from "./Clock";
+import StopButton from "./StopButton"
+import { minutesToDuration, secondsToDuration } from "../utils/duration/index";
+
 
 // These functions are defined outside of the component to insure they do not have access to state
 // and are, therefore more likely to be pure.
@@ -55,73 +57,71 @@ function Pomodoro() {
   // The current session - null where there is no session running
   const [session, setSession] = useState(null);
 
-  // ToDo: Allow the user to adjust the focus and break duration. 
-  const [focusDuration, setFocusDuration] = useState(25)
-  const [breakDuration, setBreakDuration] = useState(5)
+  // ToDo: Allow the user to adjust the focus and break duration.
+  const [focusDuration, setFocusDuration] = useState(25);
+  const [breakDuration, setBreakDuration] = useState(5);
   // const focusDuration = 25;
   // const breakDuration = 10;
 
   function handleFocusIncrease() {
-    if (isTimerRunning) return false
+    if (isTimerRunning) return false;
 
-    setFocusDuration(currentValue => {
+    setFocusDuration((currentValue) => {
       if (currentValue >= 60) {
-        return 60
+        return 60;
       } else {
-        return currentValue + 5
+        return currentValue + 5;
       }
-    })
+    });
   }
 
   function handleFocusDecrease() {
-    if (isTimerRunning) return false
+    if (isTimerRunning) return false;
 
-    setFocusDuration(currentValue => {
-      if(currentValue <= 5) {
-        return 5
+    setFocusDuration((currentValue) => {
+      if (currentValue <= 5) {
+        return 5;
       } else {
-        return currentValue - 5
+        return currentValue - 5;
       }
-    })
-
+    });
   }
 
-  function handleBreakIncrease () {
-    if (isTimerRunning) return false
-    setBreakDuration(currentValue => {
+  function handleBreakIncrease() {
+    if (isTimerRunning) return false;
+    setBreakDuration((currentValue) => {
       if (currentValue >= 15) {
-        return 15
+        return 15;
       } else {
-        return currentValue + 1
+        return currentValue + 1;
       }
-    })
+    });
   }
 
-  function handleBreakDecrease () {
-    if (isTimerRunning) return false
+  function handleBreakDecrease() {
+    if (isTimerRunning) return false;
 
-    setBreakDuration(currentValue => {
+    setBreakDuration((currentValue) => {
       if (currentValue <= 1) {
-        return 1
+        return 1;
       } else {
-        return currentValue - 1
+        return currentValue - 1;
       }
-    })
-
+    });
   }
 
   function handleStop() {
-    setIsTimerRunning(false)
-    setSession(null)
+    setIsTimerRunning(false);
+    setSession(null);
   }
-
 
   /**
    * Custom hook that invokes the callback function every second
    *
    * NOTE: You will not need to make changes to the callback function
    */
-  useInterval(() => {
+  useInterval(
+    () => {
       if (session.timeRemaining === 0) {
         new Audio("https://bigsoundbank.com/UPLOAD/mp3/1482.mp3").play();
         return setSession(nextSession(focusDuration, breakDuration));
@@ -161,7 +161,8 @@ function Pomodoro() {
           <div className="input-group input-group-lg mb-2">
             <span className="input-group-text" data-testid="duration-focus">
               {/* TODO: Update this text to display the current focus session duration */}
-              Focus Duration: {focusDuration > 9 ? `${focusDuration}:00` : `0${focusDuration}:00`}
+              Focus Duration:{" "}
+              {minutesToDuration(focusDuration)}
             </span>
             <div className="input-group-append">
               {/* TODO: Implement decreasing focus duration and disable during a focus or break session */}
@@ -190,7 +191,8 @@ function Pomodoro() {
             <div className="input-group input-group-lg mb-2">
               <span className="input-group-text" data-testid="duration-break">
                 {/* TODO: Update this text to display the current break session duration */}
-                Break Duration: {breakDuration > 9 ? `${breakDuration}:00` : `0${breakDuration}:00`}
+                Break Duration:{" "}
+                {minutesToDuration(breakDuration)}
               </span>
               <div className="input-group-append">
                 {/* TODO: Implement decreasing break duration and disable during a focus or break session*/}
@@ -240,22 +242,18 @@ function Pomodoro() {
             </button>
             {/* TODO: Implement stopping the current focus or break session. and disable the stop button when there is no active session */}
             {/* TODO: Disable the stop button when there is no active session */}
-            <button
-              type="button"
-              className="btn btn-secondary"
-              data-testid="stop"
-              title="Stop the session"
-              disabled={session ? false : true}
-              onClick={handleStop}
-            >
-              <span className="oi oi-media-stop" />
-            </button>
+            <StopButton handleStop={handleStop} session={session} />
           </div>
         </div>
       </div>
-      {!session ? false : <Clock session={session} isTimerRunning={isTimerRunning} focusDuration={focusDuration} breakDuration={breakDuration} 
-      minutesToDuration={minutesToDuration} secondsToDuration={secondsToDuration} /> }
-      
+      <Clock
+          session={session}
+          isTimerRunning={isTimerRunning}
+          focusDuration={focusDuration}
+          breakDuration={breakDuration}
+          minutesToDuration={minutesToDuration}
+          secondsToDuration={secondsToDuration}
+        />
     </div>
   );
 }
