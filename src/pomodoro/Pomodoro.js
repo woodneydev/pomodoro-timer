@@ -3,6 +3,7 @@ import classNames from "../utils/class-names";
 import useInterval from "../utils/useInterval";
 import Clock from "./Clock";
 import StopButton from "./StopButton"
+import PlayButton from "./PlayButton"
 import { minutesToDuration, secondsToDuration } from "../utils/duration/index";
 
 
@@ -225,21 +226,7 @@ function Pomodoro() {
             role="group"
             aria-label="Timer controls"
           >
-            <button
-              type="button"
-              className="btn btn-primary"
-              data-testid="play-pause"
-              title="Start or pause timer"
-              onClick={playPause}
-            >
-              <span
-                className={classNames({
-                  oi: true,
-                  "oi-media-play": !isTimerRunning,
-                  "oi-media-pause": isTimerRunning,
-                })}
-              />
-            </button>
+            <PlayButton playPause={playPause} classNames={classNames} isTimerRunning={isTimerRunning} />
             {/* TODO: Implement stopping the current focus or break session. and disable the stop button when there is no active session */}
             {/* TODO: Disable the stop button when there is no active session */}
             <StopButton handleStop={handleStop} session={session} />
